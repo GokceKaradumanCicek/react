@@ -8,7 +8,7 @@ class Human{
 }
 class Person extends Human{ //Person class is extended to Human class.Now,Person class have Human class properties and methods.
     constructor(){
-        super(); //executes parent constructors
+        super(); //executes parent constructors.In this case, constructor function
         this.name= 'Gokce';
     }
     printMyName(){
@@ -16,5 +16,5 @@ class Person extends Human{ //Person class is extended to Human class.Now,Person
     }
 }
 const person= new Person();
-person.printMyName()
-person.printMyGender()
+person.printMyName();
+person.printMyGender();
