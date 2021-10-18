@@ -1,3 +1,4 @@
+import React from "react";//react dependency
 import Expense from "./components/Expense";
 import "./App.css";
 
@@ -23,13 +24,17 @@ function App() {
       date: new Date(2021, 5, 12),
     },
   ];
-  return (
-    <div>
-      <h2>Expenses</h2>
-      <p>Expense Items</p>
-      <Expense items={expenses}/>
-    </div>
+  return React.createElement('div', {}, 
+    React.createElement('h2', {}, "Expenses"),
+    React.createElement(Expense, {items:expenses})
   );
+  // return (
+  //   <div>
+  //     <h2>Expenses</h2>
+  //     <p>Expense Items</p>
+  //     <Expense items={expenses}/>
+  //   </div>
+  // );
 }
 
 export default App;
