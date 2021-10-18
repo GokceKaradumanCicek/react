@@ -1,4 +1,4 @@
-import Card from "./Card.js";
+import Card from "../UI/Card.js"; //.. for uplevel and then follows the path UI/Card.js
 import ExpenseItem from "./ExpenseItem";
 import './Expense.css';
 
