@@ -1,5 +1,5 @@
 import React from "react";//react dependency
-import Expense from "./components/Expense";
+import Expense from "./components/Expense/Expense";
 import "./App.css";
 
 function App() {
