@@ -5,6 +5,9 @@ function Item(props) {
   const [enteredValue, setEnteredValue] = useState("");
   const[isValid, setIsValid]=useState(true);
   const InputChangeHandler = (event) => {
+    if(event.target.value.trim().length>0){
+        setIsValid(true);
+    }
     setEnteredValue(event.target.value);
   };
   const submitHandler = (event) => {
@@ -19,7 +22,7 @@ function Item(props) {
     <form onSubmit={submitHandler}>
       <div className="form-control">
         <label  style={{color: !isValid? 'red': 'black' }}>Course Goal</label>
-        <input style={{ background:!isValid? 'red' : 'transperant', borderColor:!isValid? 'red': 'black'}} type="text" onChange={InputChangeHandler} />
+        <input style={{ background:!isValid? 'red' : 'transparent', borderColor:!isValid? 'red': 'black'}} type="text" onChange={InputChangeHandler} />
       </div>
       <Button type="submit">Add Goal</Button>
     </form>
