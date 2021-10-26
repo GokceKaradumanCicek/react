@@ -20,9 +20,9 @@ function Item(props) {
   };
   return (
     <form onSubmit={submitHandler}>
-      <div className="form-control">
-        <label  style={{color: !isValid? 'red': 'black' }}>Course Goal</label>
-        <input style={{ background:!isValid? 'red' : 'transparent', borderColor:!isValid? 'red': 'black'}} type="text" onChange={InputChangeHandler} />
+      <div className={`form-control ${!isValid? 'invalid': ''}`}>
+        <label>Course Goal</label>
+        <input type="text" onChange={InputChangeHandler} />
       </div>
       <Button type="submit">Add Goal</Button>
     </form>
