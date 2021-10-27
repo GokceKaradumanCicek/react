@@ -48,7 +48,7 @@ function Item(props) {
   };
   return (
     <form onSubmit={submitHandler}>
-      <div className={style[form-control]}>
+      <div className={style['form-control']}>
         <label>Course Goal</label>
         <input type="text" onChange={InputChangeHandler} />
       </div>
