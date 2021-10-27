@@ -5,16 +5,18 @@ import styled from "styled-components";
 const FormControl = styled.div`
   margin: 0.5rem 0;
 
-  &.label {
+  & label {
     font-weight: bold;
     display: block;
     margin-bottom: 0.5rem;
+    color: ${(props)=>(props.inValid ? 'red':'black')}
   }
 
-  &.input {
+  & input {
     display: block;
     width: 100%;
-    border: 1px solid #ccc;
+    border: 1px solid ${(props) => (props.inValid? 'red' : '#ccc')};
+    background: #ffd7d7;
     font: inherit;
     line-height: 1.5rem;
     padding: 0 0.25rem;
@@ -24,13 +26,6 @@ const FormControl = styled.div`
     outline: none;
     background: #fad0ec;
     border-color: #8b005d;
-  }
-  &.invalid input {
-    border-color: red;
-    background: rgb(216, 89, 89);
-  }
-  &.invalid label {
-    color: red;
   }
 `;
 function Item(props) {
@@ -52,7 +47,7 @@ function Item(props) {
   };
   return (
     <form onSubmit={submitHandler}>
-      <FormControl className={!isValid && 'invalid'}>
+      <FormControl inValid={!isValid}>
         <label>Course Goal</label>
         <input type="text" onChange={InputChangeHandler} />
       </FormControl>
