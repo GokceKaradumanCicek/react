@@ -5,13 +5,13 @@ import styled from 'styled-components';
 const FormControl=styled.div`
     margin: 0.5rem 0;
   
-  &:label {
+  &.label {
     font-weight: bold;
     display: block;
     margin-bottom: 0.5rem;
   }
   
-  &:input {
+  &.input {
     display: block;
     width: 100%;
     border: 1px solid #ccc;
@@ -29,11 +29,9 @@ const FormControl=styled.div`
       border-color: red;
       background: rgb(216, 89, 89);
   }
-  .form-control.invalid label{
+  &.invalid label{
   color:red;    
-}
-  
-`
+} 
 
 function Item(props) {
   const [enteredValue, setEnteredValue] = useState("");
