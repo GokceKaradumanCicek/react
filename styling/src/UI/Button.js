@@ -1,5 +1,5 @@
 //import styled from 'styled-components';
-import style from './Button.css';
+import style from './Button.module.css';
 // const Button=styled.button`
 //  width: 100%
 //  font: inherit;
