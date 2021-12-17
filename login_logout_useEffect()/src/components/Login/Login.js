@@ -1,8 +1,9 @@
-import React, { useState ,useEffect, useReducer} from 'react';
+import React, { useState ,useEffect, useReducer, useContext} from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
+import AuthContext from '../../store/auth-context';
 
 const emailReducer=(state,action)=>{
   if (action.type==='USER_INPUT'){
@@ -26,6 +27,7 @@ const emailReducer=(state,action)=>{
  }
 
 const Login = (props) => {
+  const AuthCtx=useContext(AuthContext);
   //const [enteredEmail, setEnteredEmail] = useState('');
   //const [emailIsValid, setEmailIsValid] = useState();
   //const [enteredPassword, setEnteredPassword] = useState('');
@@ -34,19 +36,21 @@ const Login = (props) => {
 
   const[emailState, dispatchEmail]=useReducer(emailReducer, {value:'', isValid:null} );
   const[passwordState, dispatchPassword]=useReducer(passwordReducer, {value:'', isValid:null});
-  // useEffect(()=>{
-  //   const identifier= setTimeout(()=>{
-  //     console.log("UseEffect Runs!");
-  //     setFormIsValid(
-  //       enteredEmail.includes('@') && enteredPassword.trim().length > 6
-  //   );
-  //   }, 1000);
+  const {isValid: emailIsValid}=emailState;
+  const {isValid: passwordIsValid}=passwordState;
+  useEffect(()=>{
+    const identifier= setTimeout(()=>{
+      console.log("UseEffect Runs!");
+      setFormIsValid(
+        emailIsValid && passwordIsValid
+    );
+    }, 1000);
 
-  //   return(()=>{
-  //     console.log("Timeout cleaned!")
-  //     clearTimeout(identifier);
-  //   });
-  // }, [enteredEmail, enteredPassword, setFormIsValid]);
+    return(()=>{
+      console.log("Timeout cleaned!")
+      clearTimeout(identifier);
+    });
+  }, [emailIsValid, passwordIsValid, setFormIsValid]);
 
    const emailChangeHandler = (event) => {
     dispatchEmail({type: 'USER_INPUT', val:event.target.value});
@@ -73,7 +77,7 @@ const Login = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    props.onLogin(emailState.value, passwordState.value);
+    AuthCtx.onLogin(emailState.value, passwordState.value);
   };
 
   return (
