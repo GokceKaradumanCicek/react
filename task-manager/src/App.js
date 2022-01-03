@@ -20,7 +20,7 @@ function App() {
 //destructure sendRequests and named it fetchTasks
 
   useEffect(()=>{fetchTasks()},[])
-
+ 
   const taskAddHandler = (task) => {
     setTasks((prevTasks) => prevTasks.concat(task));
   };
