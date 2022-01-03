@@ -14,9 +14,11 @@ const SimpleInput = (props) => {
     setEnteredNameIsValid(true);
     console.log(enteredValue);
   }
+
+  const nameInputClasses= enteredNameIsValid ? 'form-control': 'form-control invalid';
   return (
     <form onSubmit={formSubmitHandler}>
-      <div className='form-control'>
+      <div className={nameInputClasses}>
         <label htmlFor='name'>Your Name</label>
         <input ref={nameInputRef} type='text' id='name' />
         {!enteredNameIsValid && <p className='error-text'>You did'nt enter any name,Please enter a name</p>}
