@@ -1,35 +1,38 @@
-import React,{useRef, useState, useEffect} from 'react';
+import React,{useState} from 'react';
 const SimpleInput = (props) => {
-  const nameInputRef= useRef();
-  const[enteredNameIsValid, setEnteredNameIsValid]=useState(false);
+  const[enteredName, setEnteredName]=useState('');
   const[enteredNameTouched, setEnteredNameTouched]=useState(false);
 
-  useEffect(()=>{
-    if(enteredNameIsValid){
-      console.log("Hey, your input is valid!");
-    }
-  },[enteredNameIsValid]);
+  const enteredNameIsValid= enteredName.trim() !== '';
+  //if enteredName.trim() !=='' is true,then enteredNameIsValid is true.
+  const nameInputIsInvalid=!enteredNameIsValid && enteredNameTouched;
+ 
+  const nameInputChangeHandler=(event)=>{
+    setEnteredName(event.target.value);
+  }
 
-
-  const formSubmitHandler= event=>{
-    event.preventDefault();
+  const nameInputBlurHandler=event=>{
     setEnteredNameTouched(true);
-    const enteredValue=nameInputRef.current.value;
-    if(enteredValue.trim()=== ''){
-      setEnteredNameIsValid(false);
-      return;
-    }
-    setEnteredNameIsValid(true);
-    console.log(enteredValue);
   }
   
-  const nameInputIsInvalid=!enteredNameIsValid && enteredNameTouched;
+  const formSubmitHandler=(event)=>{
+    event.preventDefault();
+    setEnteredNameTouched(true);
+    if(!enteredNameIsValid){
+      return;
+    }
+    console.log(enteredName);
+    setEnteredName('');
+    setEnteredNameTouched(false);
+  }
+  
+
   const nameInputClasses= nameInputIsInvalid ? 'form-control invalid': 'form-control';
   return (
     <form onSubmit={formSubmitHandler}>
       <div className={nameInputClasses}>
         <label htmlFor='name'>Your Name</label>
-        <input ref={nameInputRef} type='text' id='name' />
+        <input type='text' id='name' value={enteredName} onBlur={nameInputBlurHandler} onChange={nameInputChangeHandler}/>
         {nameInputIsInvalid && <p className='error-text'>You did'nt enter any name,Please enter a name</p>}
       </div>
       <div className="form-actions">
