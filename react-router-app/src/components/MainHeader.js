@@ -1,20 +1,15 @@
-import {NavLink} from 'react-router-dom';
-import classes from './MainHeader.module.css';
-const MainHeader=()=>{
-    return(
-        <header className={classes.header}>
-            <nav>
+const ManinHeader=()=>{
+    return<header>
+        <nav>
             <ul>
                 <li>
-                    <NavLink activeClassName={classes.active} to="/welcome">Welcome</NavLink>
+                    <a href="/welcome">Welcome</a>
                 </li>
                 <li>
-                    <NavLink activeClassName={classes.active} to="/products">Products</NavLink>
+                    <a href="/products">Products</a>
                 </li>
             </ul>
-            </nav>
-        </header>
-    )
-
+        </nav>
+    </header>
 }
-export default MainHeader;
+export default ManinHeader;
