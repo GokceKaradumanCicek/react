@@ -1,0 +1,44 @@
+.auth{
+  background: rgb(192, 171, 141);
+  box-shadow: 0 8px 10px rgba(0,0,0,0.5);
+  border-radius: 15px;
+  width: 30rem;
+  margin: 2rem auto;
+  max-width: 100%;
+  text-align: center;
+  border-color: rgb(196, 109, 9);
+}
+.auth p{
+  font-weight: bold;
+  margin-left: 3rem;
+  margin: 2rem auto;
+}
+.auth h1{
+position:relative;
+color:rgb(43, 20, 2);
+left: 30px;
+
+}
+.button {
+    font: inherit;
+    border: 1px solid #faf8fa;
+    border-radius: 15px;
+    background: rgb(196, 109, 9);
+    color: white;
+    padding: 0.25rem 1rem;
+    cursor: pointer;
+    width: 20em;
+    position: relative;
+    margin-left: 0rem;
+    margin-bottom: 1rem;
+  }
+  
+  .button:hover,
+  .button:active {
+    background:rgb(223, 150, 82) ;
+    border-color: #fbfdfd;
+  }
+  
+  .button:focus {
+    outline: none;
+  }

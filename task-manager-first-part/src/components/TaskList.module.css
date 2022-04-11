@@ -1,0 +1,76 @@
+.table {
+    border-radius: 50%;
+    width: 100%;
+}
+.th {
+  border: 1px solid #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 10px rgba(0,0,0,0.5);
+  text-align: left;
+  padding: 10px;
+  font-size: 20px;
+  background-color: rgb(196, 109, 9);
+  margin-top: 50rem;
+}
+.td {
+  border: 1px solid #8bacc7;
+  border-radius: 20px;
+  box-shadow: 0 8px 10px rgba(0,0,0,0.5);
+  text-align: left;
+  padding: 10px;
+  font-size: 20px;
+  background-color: rgb(192, 171, 141);
+}
+.done{
+  border: 1px solid #8bacc7;
+  border-radius: 20px;
+  box-shadow: 0 8px 10px rgba(0,0,0,0.5);
+  text-align: left;
+  padding: 10px;
+  font-size: 20px;
+  background-color: rgb(63, 167, 54);
+}
+.undone{
+  border: 1px solid #8bacc7;
+  border-radius: 20px;
+  box-shadow: 0 8px 10px rgba(0,0,0,0.5);
+  text-align: left;
+  padding: 10px;
+  font-size: 20px;
+  background-color:  rgb(209, 43, 13);
+}
+.button {
+  width: 10em;
+  border: 1px solid #f7faf9;
+  border-radius: 20px;
+  background:rgb(196, 109, 9);
+  color: white;
+  padding: 0.25rem 1rem;
+  position: relative;
+}
+.button:hover,
+.button:active {
+  background:rgb(223, 150, 82) ;
+  border-color: #fbfdfd;
+}
+
+.button:focus {
+  outline: none;
+}
+.donebutton{
+  width: 10em;
+  border: 1px solid #f7faf9;
+  border-radius: 20px;
+  background:  rgb(63, 167, 54);
+  color: white;
+  padding: 0.25rem 1rem;
+  position: relative;
+}
+.outofdatebutton{
+  width: 10em;
+  border: 1px solid #f7faf9;
+  border-radius: 20px;
+  background:  rgb(209, 43, 13);
+  padding: 0.25rem 1rem;
+  position: relative;
+}
