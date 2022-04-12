@@ -5,9 +5,10 @@ import Button from '../UI/Button';
 import './UserSign.css';
 import { AuthContext } from '../context/auth-context';
 import { NavLink } from 'react-router-dom';
+import Login from './Login';
 
 const UserSign = React.memo(props => {
-    const{createAccount}=useContext(AuthContext);
+    const{createAccount, makeloginSuccessfull, login}=useContext(AuthContext);
     const [subsUserInfo, setSubsUserInfo]=useState({username:'', useremail:'', password:'', id:''});
     const [usersInfo, setUsersInfo]=useState([]);
     const[isSuccessful, setIsSuccessful]=useState(false);
@@ -83,7 +84,7 @@ return (
                  {!isSuccessful&&<Button type="submit">Create Account</Button>}
              </div>
              <div className="login-modal__actions">
-                 {isSuccessful && <NavLink to='/loginUser'><Button >Login</Button></NavLink>}
+                 {isSuccessful && <NavLink to='/tasks'><Button onClick={()=>{makeloginSuccessfull(); login(subsUserInfo)}}>Login</Button></NavLink>}
              </div>
              <div className="login-modal__actions">
                  <NavLink to='/login'><Button >Close</Button></NavLink>

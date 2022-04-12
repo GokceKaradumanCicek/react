@@ -1,6 +1,7 @@
 import React,{useState, useEffect} from "react";
 export const AuthContext= React.createContext({
     isAuth: false,
+    isLoginSuccessfull:false,
     openSubs:false,
     userInformation:[],
     loginUserInfo:{},
@@ -8,10 +9,12 @@ export const AuthContext= React.createContext({
     setUserIdtoContext:()=>{},
     createAccount:()=>{},
     login: ()=>{},
-    logout:()=>{}
+    logout:()=>{},
+    makeloginSuccessfull:()=>{}
 });
 const AuthContextProvider= props =>{
     const [isAuthenticated, setIsAutheticated]=useState(false);
+    const [isLoginSuccessfull, setIsLoginSuccessfull]=useState(false);
     const[userInformation, setUserInformation]=useState([]);
     const[loginUser, setLoginUser]=useState({});
     const[loginUserId, setLoginUserId]=useState('');
@@ -37,6 +40,10 @@ const AuthContextProvider= props =>{
     const loginUserIdHandler=(userId)=>{
         setLoginUserId(userId);
     }
+    
+    const loginSuccessfullHandler=()=>{
+        setIsLoginSuccessfull(true);
+    }
 
     const loginHandler =(user)=>{
         setLoginUser(user);
@@ -49,7 +56,7 @@ const AuthContextProvider= props =>{
         setOpenSubs(true);
     }
     return(
-        <AuthContext.Provider value={{isAuth:isAuthenticated,openSubs:openSubs,userInformation:userInformation, loginUserInfo:loginUser,loginUserId:loginUserId,setUserIdtoContext:loginUserIdHandler ,login:loginHandler, logout:logoutHandler, createAccount:createAccountHandler}}>
+        <AuthContext.Provider value={{isLoginSuccessfull:isLoginSuccessfull,isAuth:isAuthenticated,openSubs:openSubs,userInformation:userInformation, loginUserInfo:loginUser,loginUserId:loginUserId,setUserIdtoContext:loginUserIdHandler ,login:loginHandler, logout:logoutHandler, createAccount:createAccountHandler, makeloginSuccessfull:loginSuccessfullHandler}}>
             {props.children}
         </AuthContext.Provider>
     );

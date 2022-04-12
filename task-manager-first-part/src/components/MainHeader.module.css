@@ -17,7 +17,7 @@
     justify-content: center;
   }
   .navDone{
-    width: 10em;
+    width: 15em;
     border: 1px solid #f7faf9;
     border-radius: 20px;
     background:rgb(196, 109, 9);
@@ -26,13 +26,24 @@
     position: relative;
   }
   .navOut{
-    width: 10em;
+    width: 15em;
     border: 1px solid #f7faf9;
     border-radius: 20px;
     background:rgb(196, 109, 9);
     color: rgb(240, 235, 235);
     padding: 0.25rem 2rem;
     position: relative;
+  }
+  .signOut{
+    position: absolute;
+    right: 10px;
+    width: 15em;
+    border: 1px solid #f7faf9;
+    border-radius: 20px;
+    background:rgb(196, 109, 9);
+    color: rgb(240, 235, 235);
+    padding: 0.25rem 2rem;
+    
   }
   .header li {
     margin: 0 1rem;
@@ -54,4 +65,4 @@
     background: rgb(241, 85, 57);
     border-color: #fbfdfd;
   }
- 
+  

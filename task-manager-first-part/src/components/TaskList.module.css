@@ -40,7 +40,7 @@
   background-color:  rgb(209, 43, 13);
 }
 .button {
-  width: 10em;
+  width: 15em;
   border: 1px solid #f7faf9;
   border-radius: 20px;
   background:rgb(196, 109, 9);
@@ -58,7 +58,7 @@
   outline: none;
 }
 .donebutton{
-  width: 10em;
+  width: 15em;
   border: 1px solid #f7faf9;
   border-radius: 20px;
   background:  rgb(63, 167, 54);
@@ -67,7 +67,7 @@
   position: relative;
 }
 .outofdatebutton{
-  width: 10em;
+  width: 15em;
   border: 1px solid #f7faf9;
   border-radius: 20px;
   background:  rgb(209, 43, 13);

@@ -6,20 +6,22 @@ import { DoneOutOfDateContext } from "../context/doneOutOfDate-context";
 const Filter =React.memo( props=>{
     const[filtered, setFiltered]=useState('');
     const{loginUserInfo, loginUserId}=useContext(AuthContext);
-    const{doneTasksInContext, outOfDateTasksFromContext}=useContext(DoneOutOfDateContext);
+    const{isShowDone,doneTasksInContext, outOfDateTasksFromContext, unStatusTaskFromContext}=useContext(DoneOutOfDateContext);
     console.log("Filtered", filtered);
     const{filterHandler, tasks}=props;
     const inputRef=useRef();
 
+    console.log("IS SHOW DONE FROM FILTER:", isShowDone);
     console.log("DONE TASKS IN CONTEXT", doneTasksInContext);
-    console.log("OUT OF DATE TASKS IN CONTEXT", outOfDateTasksFromContext)
+    console.log("OUT OF DATE TASKS IN CONTEXT", outOfDateTasksFromContext);
+     console.log("FILTER TASK", tasks);
     
 
     useEffect(()=>{
         const timer=setTimeout(()=>{
             if(filtered === inputRef.current.value){
-                const query=filtered.length===0? '': `?orderBy="issue"&equalTo="${filtered}"`
-                fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/tasks.json`+query)
+                const query=(filtered.length===0)? '': `?orderBy="issue"&equalTo="${filtered}"`;
+                fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/${loginUserInfo.username}/${loginUserId}/tasks.json`+query)
                 .then(response => response.json())
                 .then(responseData =>{
                 const loadedData=[];
@@ -41,8 +43,9 @@ const Filter =React.memo( props=>{
             })
             }
             return ()=>{clearTimeout(timer)}
-        }, 500)   
-    }, [filtered, filterHandler, inputRef]);
+        }, 500)
+
+    }, [filtered, filterHandler, inputRef,doneTasksInContext, outOfDateTasksFromContext, unStatusTaskFromContext]);
 
     return(
         <Card>

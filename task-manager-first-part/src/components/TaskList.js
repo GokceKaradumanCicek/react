@@ -5,23 +5,26 @@ import { DoneOutOfDateContext } from "../context/doneOutOfDate-context";
 const TaskList =(props)=>{
     const[doneTasks, setDoneTasks]=useState([]);
     const[outOfDateTasks, setOutOfTasks]=useState([]);
+    const[unStatus,  setUnstatusTask]=useState([]);
+    const[isButtonShown, setIsButtonShow]=useState(true);
     const{loginUserInfo,loginUserId}=useContext(AuthContext);
-    const{isDone,isShowAll,doneTasksInContext,isOutOfDate,allTasks,setDoneToContext, setOutOfDateToContext}=useContext(DoneOutOfDateContext);
-    const{tasks, makeItDone, makeItOutOf, showAll}=props;
+    const{isShowDone,isShowAll,isShowOutOfDate,setDoneToContext, setOutToContext, setUnstatusToContext}=useContext(DoneOutOfDateContext);
+    const{tasks, makeItDone, makeItOutOf, makeItUnstatus, showDone, showAll, showOut}=props;
 
-
-    console.log("ALL TASK FROM list", allTasks);
+    console.log("DONE", doneTasks);
+    console.log("OUT OF", outOfDateTasks);
     useEffect(()=>{
-        if(isDone && !isOutOfDate){
-            makeItDone(doneTasks);
-        }else if(isOutOfDate && !isDone){
-            makeItOutOf(outOfDateTasks);
-        }else if(isShowAll){
-            console.log("SHOW ALL DÖNGÜSÜNE GİRDİ")
+        if(isShowDone){
+            showDone();
+        }
+        if(isShowAll){
             showAll();
         }
-    },[isDone, doneTasks,isOutOfDate,outOfDateTasks, isShowAll])
-    
+        if(isShowOutOfDate){
+            showOut();
+        }
+    },[isShowDone, isShowAll, isShowOutOfDate]);
+   
  return(
     <div>
         <ul>
@@ -41,39 +44,58 @@ const TaskList =(props)=>{
                      <td 
                       className={`${classes.td} 
                       ${(doneTasks.filter(d => d.id === tsk.id).length > 0 || tsk.done ===true ) && classes.done } 
-                      ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0||tsk.outOfDate===true) && classes.outofdatebutton }`}>{tsk.project}</td>
+                      ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0||tsk.outOfDate===true) && classes.outofdatebutton }
+                      ${(unStatus.filter(d => d.id === tsk.id).length > 0 && classes.td || (!tsk.done && !tsk.outOfDate))}`}>{tsk.project}</td>
                      <td 
                        className={`${classes.td} 
                        ${(doneTasks.filter(d => d.id === tsk.id).length > 0 || tsk.done ===true )&& classes.done }
-                       ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0||tsk.outOfDate===true) && classes.outofdatebutton }`}>{tsk.issue}</td>
+                       ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0||tsk.outOfDate===true) && classes.outofdatebutton }
+                       ${unStatus.filter(d => d.id === tsk.id).length > 0 && classes.td || (!tsk.done && !tsk.outOfDate)}`}>{tsk.issue}</td>
                      <td 
                       className={`${classes.td}
                       ${(doneTasks.filter(d => d.id === tsk.id).length > 0 || tsk.done ===true ) && classes.done } 
-                      ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0||tsk.outOfDate===true) && classes.outofdatebutton }`}>{tsk.task}</td>
+                      ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0||tsk.outOfDate===true) && classes.outofdatebutton }
+                      ${unStatus.filter(d => d.id === tsk.id).length > 0 && classes.td}`}>{tsk.task}</td>
 
                      <td 
                      className={`${classes.td} 
                      ${(doneTasks.filter(d => d.id === tsk.id).length > 0|| tsk.done ===true ) && classes.done }
-                     ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0||tsk.outOfDate===true) && classes.undone }`}>
+                     ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0||tsk.outOfDate===true) && classes.undone }
+                     ${unStatus.filter(d => d.id === tsk.id).length > 0 && classes.td}`}>
                          <button className={`${classes.button} ${(doneTasks.filter(d => d.id === tsk.id).length > 0 || tsk.done ===true)&& classes.donebutton } ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0 ||tsk.outOfDate===true)&& classes.outofdatebutton }`} onClick={props.deleteTask.bind(this, tsk.id)}>DELETE</button>
-                         <button className={`${classes.button} ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0||tsk.outOfDate===true) && classes.outofdatebutton } ${(doneTasks.filter(d => d.id === tsk.id).length > 0|| tsk.done ===true ) && classes.donebutton } `} onClick={()=>{
+                         {(!tsk.done && !tsk.outOfDate)&&<button className={`${classes.button} ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0||tsk.outOfDate===true) && classes.outofdatebutton } ${(doneTasks.filter(d => d.id === tsk.id).length > 0|| tsk.done ===true ) && classes.donebutton }
+                          ${unStatus.filter(d => d.id === tsk.id).length > 0 && classes.button} `} onClick={()=>{
                              const index=tasks.findIndex(t=>t.id===tsk.id);
                              const newOutOfTasks={...tasks[index]};
-                             const isThisIncluded= outOfDateTasks.findIndex(d=>d.id === newOutOfTasks.id);
-                             if(isThisIncluded === -1){
-                                setOutOfDateToContext(newOutOfTasks);
-                             }
-                             
-                         }}>OUT OF DATE</button>
+                             makeItOutOf(newOutOfTasks);
+                             setOutToContext(newOutOfTasks);
+                             setOutOfTasks((prev)=>[...prev,{...newOutOfTasks}])
+                         }}>OUT OF DATE</button>}
                          <button className={`${classes.button} ${(doneTasks.filter(d => d.id === tsk.id).length > 0 || tsk.done ===true )&& classes.donebutton} ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0||tsk.outOfDate===true) && classes.outofdatebutton }`}>EDIT</button>
-                         <button className={`${classes.button} ${(doneTasks.filter(d => d.id === tsk.id).length > 0 || tsk.done ===true) && classes.donebutton } ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0||tsk.outOfDate===true) && classes.outofdatebutton }`} onClick={()=>{
+                         {(!tsk.done && !tsk.outOfDate) && <button className={`${classes.button} ${(doneTasks.filter(d => d.id === tsk.id).length > 0 ||tsk.done ===true) && classes.donebutton } ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0||tsk.outOfDate===true) && classes.outofdatebutton }
+                          ${unStatus.filter(d => d.id === tsk.id).length > 0 && classes.button}`} onClick={()=>{
                              const index=tasks.findIndex(t=>t.id===tsk.id);
                              const newDoneTasks={...tasks[index]};
-                             const isItIncluded= doneTasks.findIndex(d=>d.id === newDoneTasks.id)
-                             if(isItIncluded === -1){
-                                setDoneToContext(newDoneTasks)
+                             makeItDone(newDoneTasks);
+                             setDoneToContext(newDoneTasks);
+                             setDoneTasks((prev)=>[...prev,{...newDoneTasks}]);
+                         }}>DONE</button>}
+                         {(tsk.done || tsk.outOfDate)&&<button className={`${classes.button} ${(doneTasks.filter(d => d.id === tsk.id).length > 0 ||tsk.done ===true) && classes.donebutton } ${(outOfDateTasks.filter(d => d.id === tsk.id).length > 0||tsk.outOfDate===true) && classes.outofdatebutton } 
+                          ${unStatus.filter(d => d.id === tsk.id).length > 0 && classes.button}
+                         `} onClick={()=>{
+                             const index=tasks.findIndex(t=>t.id===tsk.id);
+                             const newUnstatusTasks={...tasks[index]};
+                             makeItUnstatus(newUnstatusTasks);
+                             setUnstatusToContext(newUnstatusTasks);
+                             if(doneTasks.findIndex(d=>d.id === tsk.id)>-1){
+                                const removeFromDone =doneTasks.filter(d =>d.id !==tsk.id );
+                                setDoneTasks(removeFromDone);
+                             }else{
+                                 const removeFromOut=outOfDateTasks.filter(d =>d.id !==tsk.id);
+                                 setOutOfTasks(removeFromOut);
                              }
-                         }}>DONE</button>
+                             setUnstatusTask((prev)=>[...prev,{...newUnstatusTasks}]);
+                         }}>RETURN TO UNSTATUS</button>}
                      </td>
                     </tr>
                 ))}

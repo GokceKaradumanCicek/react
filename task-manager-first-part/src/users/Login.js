@@ -10,7 +10,7 @@ const Login= React.memo((props)=>{
     const [user, setUser]=useState({username:'', password:''});
     const [loginSuccessfull, setLoginSuccessfull]=useState(false);
     const [accountNotFound, setAccountNotFound]=useState(false);
-    const{userInformation, login, loginUserInfo,setUserIdtoContext}=useContext(AuthContext);
+    const{userInformation, login, loginUserInfo,setUserIdtoContext, makeloginSuccessfull}=useContext(AuthContext);
 
     const submitHandler=(event)=>{
         event.preventDefault();
@@ -45,9 +45,12 @@ const Login= React.memo((props)=>{
                  <div className="login-modal__actions">
                   {!loginSuccessfull && <Button type='submit' >Login</Button>}
                  </div>
+                 <div className="login-modal__actions">
+                  <NavLink to='/login'><Button>Close</Button></NavLink>
+                 </div>
                  {(accountNotFound && !loginSuccessfull)&& <p>Invalid.Account is not found!</p>}
                  <div className="login-modal__actions">
-                 {loginSuccessfull && <NavLink to='/tasks'> <Button>Successful! Open your tasks.</Button></NavLink>}
+                 {loginSuccessfull && <NavLink to='/tasks'> <Button onClick={()=>makeloginSuccessfull()}>Successful! Open your tasks.</Button></NavLink>}
                  </div>
                  
             </form>
