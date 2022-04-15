@@ -5,15 +5,16 @@ import Button from '../UI/Button';
 import './UserSign.css';
 import { AuthContext } from '../context/auth-context';
 import { NavLink } from 'react-router-dom';
-import Login from './Login';
 
 const UserSign = React.memo(props => {
-    const{createAccount, makeloginSuccessfull, login}=useContext(AuthContext);
-    const [subsUserInfo, setSubsUserInfo]=useState({username:'', useremail:'', password:'', id:''});
-    const [usersInfo, setUsersInfo]=useState([]);
+    const{makeloginSuccessfull, login, signup}=useContext(AuthContext);
+    const [subsUserInfo, setSubsUserInfo]=useState({username:'', useremail:'', password:'', id:''});//Newly created account user
+    const [usersInfo, setUsersInfo]=useState([]);//usersInfo contains all users
+    const [error, setError]=useState();
     const[isSuccessful, setIsSuccessful]=useState(false);
     const[isAlreadyCreated, setIsAlreadyCreated]=useState(false);
     const[isValid, setIsValid]=useState(true);
+
 
     useEffect(()=>{
       fetch('https://task-manager-864b5-default-rtdb.firebaseio.com/userInfo.json')
@@ -32,33 +33,44 @@ const UserSign = React.memo(props => {
       })
     }, [subsUserInfo]);
   
-    const submitHandler=(event)=>{
+    async function submitHandler(event){
       event.preventDefault();
+      setIsAlreadyCreated(false);
+      setIsValid(false);
+      setIsSuccessful(false);
+      setError(null);
       const index=usersInfo.findIndex(u=>u.username===subsUserInfo.username && u.useremail===subsUserInfo.useremail);
       if(index===-1 && (subsUserInfo.username.trim().length !== 0 || subsUserInfo.useremail.trim().length !== 0 ||subsUserInfo.password.trim().length!==0)){
-        fetch('https://task-manager-864b5-default-rtdb.firebaseio.com/userInfo.json',{
-          method:'POST',
-          body:JSON.stringify(subsUserInfo),
-          headers:{
-           "Content-Type":"application/json"
+        setIsValid(true);
+        try{
+          let response=await signup(subsUserInfo.useremail, subsUserInfo.password);
+          if(response.additionalUserInfo.isNewUser && !error){
+            setError(null);
+            fetch('https://task-manager-864b5-default-rtdb.firebaseio.com/userInfo.json',{
+              method:'POST',
+              body:JSON.stringify(subsUserInfo),
+              headers:{
+              "Content-Type":"application/json"
+              }
+            })
+            .then(response=> response.json())
+            .then(responseData=>{
+             return setUsersInfo((prevUser)=>{ return [...prevUser,{id:responseData.name, ...subsUserInfo}]});
+            });
+            setIsSuccessful(true);
           }
-         })
-         .then(response=> response.json())
-         .then(responseData=>{
-          return setUsersInfo((prevUser)=>{ return [...prevUser,{id:responseData.name, ...subsUserInfo}]});
-         });
-         createAccount();
-         setIsSuccessful(true);
+        }catch(err){
+          setError(err);
+        }
+      }else{
+        setIsValid(false);
       }
       if(index!==-1){
         setIsAlreadyCreated(true);
       }
-      if(subsUserInfo.username.trim().length === 0 || subsUserInfo.useremail.trim().length === 0 ||subsUserInfo.password.trim().length===0){
-        setIsValid(false);
-      }
     }
+    console.log("++++++++++SUBSUSERINFO", subsUserInfo);
 
-     console.log("USERS:", usersInfo);
 return (
 <Card>
         <div className="backdrop" onClick={props.onClose} />
@@ -81,10 +93,13 @@ return (
      }}></Input>
              </div>
              <div className="login-modal__actions">
-                 {!isSuccessful&&<Button type="submit">Create Account</Button>}
+                 {error &&<Button onClick={() => window.location.reload()}>Try Again</Button>}
              </div>
              <div className="login-modal__actions">
-                 {isSuccessful && <NavLink to='/tasks'><Button onClick={()=>{makeloginSuccessfull(); login(subsUserInfo)}}>Login</Button></NavLink>}
+                 {(!isSuccessful&&!error) &&<Button type="submit" disabled={error}>Create Account</Button>}
+             </div>
+             <div className="login-modal__actions">
+                 {(isSuccessful&& !error) && <NavLink to='/tasks'><Button onClick={()=>{makeloginSuccessfull(); login(subsUserInfo.useremail, subsUserInfo.password, subsUserInfo.username, subsUserInfo.id)}}>Login</Button></NavLink>}
              </div>
              <div className="login-modal__actions">
                  <NavLink to='/login'><Button >Close</Button></NavLink>
@@ -92,6 +107,7 @@ return (
         </form>
         {isAlreadyCreated&&<p>This account is already created!</p>}
         {!isValid&&<p>Invalid information.Please check your entries!</p>}
+        {error && `Error:${error}`}
         </div>
 </Card>
   );

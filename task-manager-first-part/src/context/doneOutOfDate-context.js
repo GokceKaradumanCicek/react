@@ -12,7 +12,9 @@ export const DoneOutOfDateContext= React.createContext({
   setUnstatusToContext:()=>{},
   showDone:()=>{},
   showAllTasks:()=>{},
-  showOut:()=>{}
+  showOut:()=>{},
+  setNumberOfDone:()=>{},
+  setNumberOfOut:()=>{}
 });
 const DoneOutOfDateProvider= props =>{
     const[isShowDone, setIsShowDone]=useState(false);
@@ -21,7 +23,8 @@ const DoneOutOfDateProvider= props =>{
     const[doneTasks, setDoneTasks]=useState([]);
     const[outOfDateTasks, setOutOfDateTasks]=useState([]);
     const[unStatusTasks, setUnStatusTasks]=useState([]);
-    const{loginUserInfo,loginUserId}=useContext(AuthContext);
+    const[numberOfDone, setNumberOfDone]=useState(0);
+    const[numberOfOut, setNumberOfOut]=useState(0);
 
     const setDoneHandler=(newDone)=>{
         setDoneTasks((prev)=>[...prev,{...newDone}]);
@@ -81,7 +84,7 @@ const DoneOutOfDateProvider= props =>{
 //    }
 
     return(
-        <DoneOutOfDateContext.Provider value={{isShowOutOfDate:isShowOutOfDate,isShowAll:isShowAll,isShowDone:isShowDone, doneTasksInContext:doneTasks,outOfDateTasksFromContext:outOfDateTasks,unStatusTaskFromContext:unStatusTasks,setDoneToContext:setDoneHandler, setOutToContext:setOutHandler, setUnstatusToContext:setUnstatusHandler, showDone:showDoneHandler, showAllTasks:showAllHandler, showOut:showOutHandler}}>
+        <DoneOutOfDateContext.Provider value={{numberOfDone:numberOfDone,setNumberOfDone:setNumberOfDone,numberOfOut:numberOfOut, setNumberOfOut:setNumberOfOut,isShowOutOfDate:isShowOutOfDate,isShowAll:isShowAll,isShowDone:isShowDone, doneTasksInContext:doneTasks,outOfDateTasksFromContext:outOfDateTasks,unStatusTaskFromContext:unStatusTasks,setDoneToContext:setDoneHandler, setOutToContext:setOutHandler, setUnstatusToContext:setUnstatusHandler, showDone:showDoneHandler, showAllTasks:showAllHandler, showOut:showOutHandler}}>
             {props.children}
         </DoneOutOfDateContext.Provider>
     );

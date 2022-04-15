@@ -1,4 +1,6 @@
 import React,{ useState , useCallback, useReducer, useContext, useEffect} from "react";
+import { useDispatch, useSelector} from "react-redux";
+import {doneOutNumberActions} from "../store/index";
 import TaskForm from "./TaskForm";
 import Filter from "./Filter";
 import TaskList from "./TaskList";
@@ -21,16 +23,37 @@ const userTaskReducer=(currentState, action)=>{
 }
 
 const Tasks=()=>{
-    const {loginUserInfo, userInformation,loginUserId, login}=useContext(AuthContext);
+    const {loginUser, userInformation,loginUserId, login}=useContext(AuthContext);
     const{isDone, isOutOfDate, doneTasksInContext,setDoneTasks,setOutOfDateTasks}=useContext(DoneOutOfDateContext);
-    const[currentUser, setCurrentUser]=useState({});
+     const[user, setUser]=useState({});
     const[done, setDone]=useState([]);
     const[outOf, setOutOf]=useState([]);
     const[error, setError]=useState(false);
     const[userTask, dispatchTask]=useReducer(userTaskReducer, []);
+    const dispatch=useDispatch();
+    const numberOfDone=useSelector(state=>state.doneNumber);
+    const numberOfOut=useSelector(state=>state.outNumber);
+    console.log("loginUser", loginUser);
 
-    const onAddTaskHandler=async(newTask)=>{
-        fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/${loginUserInfo.username}/${loginUserId}/tasks.json`,{
+
+    useEffect(() => {
+        const user={
+            username:localStorage.getItem('username'),
+            useremail:localStorage.getItem('useremail'),
+            userId:localStorage.getItem('userId'),
+            password:localStorage.getItem('password')
+        }
+        console.log("&&&&&&&&&user", user);
+        setUser(user);
+      }, []);
+
+
+    //const foundUser = JSON.parse(localStorage.getItem("user"));
+    //console.log("foundUser", foundUser);
+    const username=localStorage.getItem("username");
+    const userId=localStorage.getItem("userId");
+    const onAddTaskHndler=async(newTask)=>{
+        fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/tasks/${username}.json`,{
             method:'POST',
             body:JSON.stringify(newTask),
             headers:{ 'Content-Type' : 'application/json' }
@@ -44,14 +67,27 @@ const Tasks=()=>{
     }
 
      const removeItem=(taskId)=>{
-      fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/${loginUserInfo.username}/${loginUserId}/tasks/${taskId}.json`,{
-      method:'DELETE',
-      })
-      .then(response=>{
+      fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/tasks/${username}/${taskId}.json`)
+      .then(response=> response.json())
+      .then(responseData=>{
+          console.log("SILINECEK TASK:", responseData);
+          const isRemovedDataDone=responseData.done;
+          const isRemovedDataOut=responseData.outOfDate;
+          if(isRemovedDataDone===true){
+              dispatch(doneOutNumberActions.done(numberOfDone-1))
+          }
+          if(isRemovedDataOut===true){
+              dispatch(doneOutNumberActions.out(numberOfOut-1))
+          }
+          fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/tasks/${username}/${taskId}.json`,{
+          method:'DELETE',
+          })
+         .then(response=>{
             dispatchTask({type:'DELETE', id:taskId});
-       }).catch(error=>{
+          }).catch(error=>{
            setError("Something went wrong");
-       })
+          })
+      })
      }
 
     const onSearchHandler=useCallback((filteredData)=>{
@@ -61,8 +97,9 @@ const Tasks=()=>{
     }, []);
     
     const onDoneHandler=useCallback((newDoneTasks)=>{
+        console.log("NEW DONE TO BE MAKING DONE", newDoneTasks);
         const taskId=newDoneTasks.id;
-        fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/${loginUserInfo.username}/${loginUserId}/tasks/${taskId}.json`,{
+        fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/tasks/${username}/${taskId}.json`,{
             method: "PATCH",
             body:JSON.stringify({done:true, outOfDate:false}),
             headers:{ 'Content-Type' : 'application/json' }
@@ -76,7 +113,7 @@ const Tasks=()=>{
     
      const onOutOfDateHandler=useCallback((newOutTask)=>{
         const taskId=newOutTask.id;
-        fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/${loginUserInfo.username}/${loginUserId}/tasks/${taskId}.json`,{
+        fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/tasks/${username}/${taskId}.json`,{
             method: "PATCH",
             body:JSON.stringify({outOfDate:true, done:false}),
             headers:{ 'Content-Type' : 'application/json' }
@@ -90,7 +127,7 @@ const Tasks=()=>{
 
      const onMakeItUnStatusHandler=useCallback((task)=>{
         const taskId=task.id;
-        fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/${loginUserInfo.username}/${loginUserId}/tasks/${taskId}.json`,{
+        fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/tasks/${username}/${taskId}.json`,{
             method: "PATCH",
             body:JSON.stringify({outOfDate:false, done:false}),
             headers:{ 'Content-Type' : 'application/json' }
@@ -103,7 +140,7 @@ const Tasks=()=>{
      }, []);
 
      const showDoneTasks=useCallback(()=>{
-        fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/${loginUserInfo.username}/${loginUserId}/tasks.json`)
+        fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/tasks/${username}.json`)
         .then(response=>{return response.json()})
         .then( responseData => {
             const loadedData=[];
@@ -130,7 +167,7 @@ const Tasks=()=>{
      }, []);
 
      const onShowOutTasks=useCallback(()=>{
-        fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/${loginUserInfo.username}/${loginUserId}/tasks.json`)
+        fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/tasks/${username}.json`)
         .then(response=>{return response.json()})
         .then( responseData => {
             const loadedData=[];
@@ -158,7 +195,7 @@ const Tasks=()=>{
 
 
      const onShowAllHandler=useCallback(()=>{
-        fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/${loginUserInfo.username}/${loginUserId}/tasks.json`)
+        fetch(`https://task-manager-864b5-default-rtdb.firebaseio.com/tasks/${username}.json`)
         .then(response=>{return response.json()})
         .then( responseData => {
             const loadedData=[];
@@ -181,14 +218,15 @@ const Tasks=()=>{
         })
 
      }, []);
-
+   
+     //console.log("current user", currentUser);
     
     return(
      <div>
       {error && <ErrorModal onClose={()=>{setError(!error)}}>Something went wrong!</ErrorModal>}
-       <TaskForm label="task"  addTask={onAddTaskHandler}/>
-       <Filter filterHandler={onSearchHandler} tasks={userTask}/>
-       <TaskList tasks={userTask} deleteTask={removeItem} makeItDone={onDoneHandler} makeItOutOf={onOutOfDateHandler} makeItUnstatus={onMakeItUnStatusHandler} showDone={showDoneTasks} showAll={onShowAllHandler} showOut={onShowOutTasks} />
+       <TaskForm label="task"  addTask={onAddTaskHndler} loginUser/>
+       <Filter filterHandler={onSearchHandler} tasks={userTask} loginUser={loginUser}/>
+       <TaskList currentUser={user} tasks={userTask} deleteTask={removeItem} makeItDone={onDoneHandler} makeItOutOf={onOutOfDateHandler} makeItUnstatus={onMakeItUnStatusHandler} showDone={showDoneTasks} showAll={onShowAllHandler} showOut={onShowOutTasks} />
      </div>
     );
 };

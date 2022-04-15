@@ -6,13 +6,13 @@
     margin-left: 40px;
     padding-top: 20px;
     padding-bottom: 30px;
-    padding-left: 15px;
+    padding-left: 5px;
     margin-top: 15px;
     width: 96%
 }
 .card p{
     font-weight: bold;
-    margin-left: 4rem;
+    margin-left: 1rem;
 }
 .card h1{
   position:relative;

@@ -5,14 +5,18 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import AuthContextProvider from './context/auth-context';
 import DoneOutOfDateProvider from './context/doneOutOfDate-context';
+import { Provider } from 'react-redux';
 import {BrowserRouter} from 'react-router-dom';
+import store from './store/index';
 
-ReactDOM.render(<BrowserRouter>
+ReactDOM.render(
+<Provider store={store}>
+<BrowserRouter>
   <AuthContextProvider>
    <DoneOutOfDateProvider>
      <App/>
    </DoneOutOfDateProvider>
-  </AuthContextProvider></BrowserRouter>,
+  </AuthContextProvider></BrowserRouter></Provider>,
   document.getElementById('root')
 );
 

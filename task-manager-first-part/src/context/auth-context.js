@@ -1,4 +1,5 @@
-import React,{useState, useEffect} from "react";
+import React,{useState, useEffect, useContext} from "react";
+import { auth } from "../firebase";
 export const AuthContext= React.createContext({
     isAuth: false,
     isLoginSuccessfull:false,
@@ -7,35 +8,21 @@ export const AuthContext= React.createContext({
     loginUserInfo:{},
     loginUserId:'',
     setUserIdtoContext:()=>{},
-    createAccount:()=>{},
     login: ()=>{},
     logout:()=>{},
-    makeloginSuccessfull:()=>{}
+    makeloginSuccessfull:()=>{},
+    signup:()=>{},
+    setUserInformation:()=>{}
 });
 const AuthContextProvider= props =>{
     const [isAuthenticated, setIsAutheticated]=useState(false);
-    const [isLoginSuccessfull, setIsLoginSuccessfull]=useState(false);
+    const [isLoginSuccessfull, setIsLoginSuccessfull]=useState(false);//makeloginSuccessfull function makes isLoginSuccessfull true.
+    const [isLoading, setLoading]=useState(true);
     const[userInformation, setUserInformation]=useState([]);
-    const[loginUser, setLoginUser]=useState({});
+    const[loginUser, setLoginUser]=useState();
     const[loginUserId, setLoginUserId]=useState('');
     const[openSubs, setOpenSubs]=useState(false);
     
-    useEffect(()=>{
-        fetch('https://task-manager-864b5-default-rtdb.firebaseio.com/userInfo.json')
-          .then( response => {return response.json()})
-          .then( responseData => {
-              const loadedUsers=[];
-              for(const key in responseData){
-                  loadedUsers.push({
-                      id:key,
-                      username:responseData[key].username,
-                      useremail:responseData[key].useremail,
-                      password:responseData[key].password
-                  });
-              }
-             setUserInformation(loadedUsers);
-        })
-      }, []);
 
     const loginUserIdHandler=(userId)=>{
         setLoginUserId(userId);
@@ -45,20 +32,46 @@ const AuthContextProvider= props =>{
         setIsLoginSuccessfull(true);
     }
 
-    const loginHandler =(user)=>{
-        setLoginUser(user);
-        setIsAutheticated(true);
-    }
     const logoutHandler=()=>{
         setIsAutheticated(false);
+        setIsLoginSuccessfull(false);
+        localStorage.clear();
+        return auth.signOut();
     }
-    const createAccountHandler =()=>{
-        setOpenSubs(true);
+    
+    const loginHandler =async(email, password, username, id)=>{
+        const user={useremail:email, password:password, username:username, userId:id};
+        localStorage.setItem('username', username);
+        localStorage.setItem('userId', id);
+        localStorage.setItem('password', password);
+        localStorage.setItem('useremail', email);
+        setLoginUser(user);
+        setIsAutheticated(true);
+        setIsLoginSuccessfull(true);
+        return auth.signInWithEmailAndPassword(email,password);
     }
+
+    function signup(email, password){
+        console.log("SIGN IN WORKS");
+        return auth.createUserWithEmailAndPassword(email, password);
+    }
+    useEffect(()=>{
+        const unsubscribe = auth.onAuthStateChanged(user=>{
+            console.log("UNSUBSCRIBE WORK");
+            console.log("UNSUBSCRIBE WORK USER", user);
+            setLoginUser(user);
+            setLoading(false);
+        })
+        return unsubscribe
+    }, [])
+
     return(
-        <AuthContext.Provider value={{isLoginSuccessfull:isLoginSuccessfull,isAuth:isAuthenticated,openSubs:openSubs,userInformation:userInformation, loginUserInfo:loginUser,loginUserId:loginUserId,setUserIdtoContext:loginUserIdHandler ,login:loginHandler, logout:logoutHandler, createAccount:createAccountHandler, makeloginSuccessfull:loginSuccessfullHandler}}>
-            {props.children}
+        <AuthContext.Provider value={{signup,loginUser,userInformation, setUserInformation,isLoginSuccessfull:isLoginSuccessfull,isAuth:isAuthenticated,openSubs:openSubs,loginUserId:loginUserId,setUserIdtoContext:loginUserIdHandler ,login:loginHandler, logout:logoutHandler, makeloginSuccessfull:loginSuccessfullHandler}}>
+            {!isLoading && props.children}
         </AuthContext.Provider>
     );
+}
+export function useAuth(){
+    return useContext(AuthContext);
 }
 export default AuthContextProvider;

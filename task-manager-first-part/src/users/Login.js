@@ -1,27 +1,35 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Card from "../UI/Card";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 import { useContext, useState } from "react";
 import { AuthContext } from '../context/auth-context';
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 
 const Login= React.memo((props)=>{
-    const [user, setUser]=useState({username:'', password:''});
+    const [user, setUser]=useState({useremail:'', password:''});
     const [loginSuccessfull, setLoginSuccessfull]=useState(false);
+    const [isTyping, setIsTyping]=useState(false);
     const [accountNotFound, setAccountNotFound]=useState(false);
-    const{userInformation, login, loginUserInfo,setUserIdtoContext, makeloginSuccessfull}=useContext(AuthContext);
+    const{userInformation, login}=useContext(AuthContext);
 
+    const history=useHistory();
+    
     const submitHandler=(event)=>{
         event.preventDefault();
-        const index=userInformation.findIndex(u=>u.username===user.username && u.password===user.password);
-        console.log("USER INFO:", userInformation);
+        setIsTyping(false);
+        const index=userInformation.findIndex(u=>u.useremail===user.useremail && u.password===user.password);
+        const userInfo=userInformation[index];
+        
         if(index>=0){
-            console.log("Can be access to tasks");
-            const userId=userInformation[index].id;
-            setUserIdtoContext(userId);
             setLoginSuccessfull(true);
-            login(user);
+            try{
+                login(userInfo.useremail, userInfo.password, userInfo.username, userInfo.id);
+                history.push('/tasks');
+                
+            }catch(error){
+                console.log("FAILED TO LOGIN.");
+            }
         }else{
             setAccountNotFound(true);
         }
@@ -33,13 +41,15 @@ const Login= React.memo((props)=>{
             <h2>Login</h2>
             <form onSubmit={submitHandler}>
                  <div>
-                       <Input id="username" label="User Name:" value={user.username} onChange={(event)=>{const newName=event.target.value;
-                          setUser((prev)=>{return {username:newName,password:prev.password}});
+                       <Input id="useremail" label="User Email:" value={user.useremail} onChange={(event)=>{const newName=event.target.value;
+                        setIsTyping(true);
+                          setUser((prev)=>{return {useremail:newName,password:prev.password}});
                        }}></Input>
                  </div>
                  <div>
                        <Input type="password" id="password" label="Password:" value={user.password} onChange={(event)=>{const newPassword=event.target.value; 
-                            setUser((prev)=>{return {username:prev.username,password:newPassword}});
+                           setIsTyping(true);
+                            setUser((prev)=>{return {useremail:prev.useremail,password:newPassword}});
                         }}></Input>
                  </div>
                  <div className="login-modal__actions">
@@ -48,10 +58,7 @@ const Login= React.memo((props)=>{
                  <div className="login-modal__actions">
                   <NavLink to='/login'><Button>Close</Button></NavLink>
                  </div>
-                 {(accountNotFound && !loginSuccessfull)&& <p>Invalid.Account is not found!</p>}
-                 <div className="login-modal__actions">
-                 {loginSuccessfull && <NavLink to='/tasks'> <Button onClick={()=>makeloginSuccessfull()}>Successful! Open your tasks.</Button></NavLink>}
-                 </div>
+                 {(accountNotFound && !loginSuccessfull && !isTyping )&& <p>Invalid.Account is not found!</p>}
                  
             </form>
             </div>

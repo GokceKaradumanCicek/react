@@ -1,37 +1,32 @@
 import Tasks from './components/Tasks';
-import Card from './UI/Card';
 import Auth from './users/Auth';
-import{useContext} from 'react';
-import { AuthContext } from './context/auth-context';
+import { useAuth } from './context/auth-context'; 
 import Layout from './UI/Layout';
-import MainHeader from './components/MainHeader';
+import PrivateRoute from "./UI/PrivateRoute";
 import UserSign from './users/UserSign';
 import { Switch,Route,Redirect } from 'react-router-dom';
 import Login from './users/Login';
 
 function App() {
-  const{isAuth}=useContext(AuthContext);
-  console.log("isAuth", isAuth);
-  //{isAuth? <Tasks/> : <Auth/>}
-  //  {openSubs?<UserSign/>: <Tasks/>}
+  const{loginUser}=useAuth();
   return (
   <Layout>
     <Switch>
-      <Route path='/' exact>
+      <PrivateRoute path='/' exact>
         <Redirect to='/login'></Redirect>
-      </Route>
-      <Route path='/login' exact>
+      </PrivateRoute>
+      <PrivateRoute path='/login' exact>
         <Auth/>
-      </Route>
-      <Route path='/UserLogin' exact>
+      </PrivateRoute>
+      <PrivateRoute path='/UserLogin' exact>
         <Login/>
-      </Route>
-      <Route path='/createAccount'>
+      </PrivateRoute>
+      <PrivateRoute path='/createAccount'>
         <UserSign/>
-      </Route>
-      <Route path='/tasks' exact>
-        <Tasks/>
-      </Route>
+      </PrivateRoute>
+      <PrivateRoute path='/tasks' exact>
+        {loginUser? <Tasks/>: <Redirect to="/login"/> }
+      </PrivateRoute>
     </Switch>
   </Layout>
   );
